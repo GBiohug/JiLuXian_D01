@@ -3,6 +3,8 @@ using System;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Goap.Core;
 using CrashKonijn.Goap.Runtime;
+using GOAP.Interfaces;
+using GOAP.Tools;
 using UnityEngine;
 
 namespace GOAP.Sensors
@@ -20,6 +22,6 @@ namespace GOAP.Sensors
             return 0;
         }
 
-        public void Inject(DependencyInjector injector) {}
+        public void Inject(GoapInjector injector) {}
     }
 }

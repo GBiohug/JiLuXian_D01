@@ -17,7 +17,7 @@ namespace GOAP.Behaviors
         [SerializeField] private float MinMoveDistance = 0.25f;
 
         private Vector3 LastPosition;
-        private static readonly int WALK = Animator.StringToHash("Walk");
+        private static readonly int WALK = Animator.StringToHash("WALK");
 
         private void Awake()
         {

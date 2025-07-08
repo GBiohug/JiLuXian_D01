@@ -2,23 +2,25 @@
 using CrashKonijn.Goap.Core;
 using CrashKonijn.Goap.Resolver;
 using CrashKonijn.Goap.Runtime;
+using GOAP.Actions;
 using GOAP.Goals;
 using GOAP.Sensors;
+using GOAP.Tools;
 using UnityEngine;
 
 namespace GOAP.Factories
 {
-    [RequireComponent(typeof(DependencyInjector))]
+    [RequireComponent(typeof(GoapInjector))]
 
-    public class ElementaryAgentCapability : MonoCapabilityFactoryBase
+    public class ElementaryCapability : CapabilityFactoryBase
     {
-    private DependencyInjector Injector;
+    // private GoapInjector Injector;
 
     public override ICapabilityConfig Create()
     {   
         
-        Injector = GetComponent<DependencyInjector>();
-        CapabilityBuilder builder = new("AISET");
+        // Injector = GetComponent<DependencyInjector>();
+        CapabilityBuilder builder = new("ElementaryCapability");
 
         BuildGoals(builder);
         BuildActions(builder);
@@ -39,7 +41,11 @@ namespace GOAP.Factories
 
     private void BuildActions(CapabilityBuilder builder)
     {
-
+        builder.AddAction<WanderAction>()
+            .SetTarget<WanderTarget>()
+            .AddEffect<IsWandering>(EffectType.Increase)
+            .SetBaseCost(5)
+            .SetInRange(10);
     }
 
     private void BuildSensors(CapabilityBuilder builder)

@@ -1,6 +1,8 @@
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Goap.Runtime;
 using GOAP.Config;
+using GOAP.Interfaces;
+using GOAP.Tools;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -43,7 +45,7 @@ namespace GOAP.Sensors
             return agent.Transform.position;
         }
 
-        public void Inject(DependencyInjector injector)
+        public void Inject(GoapInjector injector)
         {
             WanderConfig = injector.WanderConfig;
         }
