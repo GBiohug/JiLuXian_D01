@@ -10,7 +10,7 @@ namespace GOAP.Factories
 {
     [RequireComponent(typeof(DependencyInjector))]
 
-    public class GoapSetConfigFactory : MonoCapabilityFactoryBase
+    public class ElementaryAgentCapability : MonoCapabilityFactoryBase
     {
     private DependencyInjector Injector;
 
