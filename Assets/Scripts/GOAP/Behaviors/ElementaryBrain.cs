@@ -4,16 +4,19 @@ using UnityEngine;
 using CrashKonijn.Goap.Runtime;
 using GOAP.Classes;
 using GOAP.Goals;
+using GOAP.Sensors;
 
 namespace GOAP.Behaviors
 {
-  
+    //TODO: 完善逻辑+部分测试用动画
     public class ElementaryBrain : MonoBehaviour
     {
 
         private GoapActionProvider provider;
         private AgentBehaviour agent;
         private GoapBehaviour goap;
+        [SerializeField] private PlayerSensor PlayerSensor;
+        
         private void Awake()
         {   this.goap = FindObjectOfType<GoapBehaviour>();
             this.agent = this.GetComponent<AgentBehaviour>();

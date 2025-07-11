@@ -1,7 +1,6 @@
 using System;
 using CrashKonijn.Agent.Core;
 using CrashKonijn.Agent.Runtime;
-
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,61 +9,142 @@ namespace GOAP.Behaviors
     [RequireComponent(typeof(NavMeshAgent), typeof(Animator), typeof(AgentBehaviour))]
     public class AgentMoveBehavior : MonoBehaviour
     {
-        private NavMeshAgent NavMeshAgent;
-        private Animator Animator;
-        private AgentBehaviour AgentBehavior;
-        private ITarget CurrentTarget;
-        [SerializeField] private float MinMoveDistance = 0.25f;
+        private NavMeshAgent navMeshAgent;
+        private Animator animator;
+        private AgentBehaviour agentBehavior;
+        private ITarget currentTarget;
+        
+        [SerializeField] private float minMoveDistance = 0.25f;
+        [SerializeField] private float minVelocityForMovement = 0.011f;
+        [SerializeField] private float rotationSpeed = 10f; 
+        
+        private Vector3 lastTargetPosition;
+        private static readonly int MOVE_X = Animator.StringToHash("MoveX");
+        private static readonly int MOVE_Y = Animator.StringToHash("MoveY");
+        private static readonly int ATTACK_TRIGGER = Animator.StringToHash("AttackTrigger");
 
-        private Vector3 LastPosition;
-        private static readonly int WALK = Animator.StringToHash("WALK");
+      
+        [SerializeField] private bool enableDebugLogs = false;
 
         private void Awake()
         {
-            NavMeshAgent = GetComponent<NavMeshAgent>();
-            Animator = GetComponent<Animator>();
-            AgentBehavior = GetComponent<AgentBehaviour>();
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            animator = GetComponent<Animator>();
+            agentBehavior = GetComponent<AgentBehaviour>();
+            
+       
+            navMeshAgent.updatePosition = false; 
+            navMeshAgent.updateRotation = false;
+            animator.applyRootMotion = true;
         }
 
         private void OnEnable()
         {
-            AgentBehavior.Events.OnTargetChanged += EventsOnTargetChanged;
-            AgentBehavior.Events.OnTargetNotInRange += EventsOnTargetOutOfRange;
+            agentBehavior.Events.OnTargetChanged += OnTargetChanged;
+            agentBehavior.Events.OnTargetNotInRange += OnTargetOutOfRange;
         }
 
         private void OnDisable()
         {
-            AgentBehavior.Events.OnTargetChanged -= EventsOnTargetChanged;
-            AgentBehavior.Events.OnTargetNotInRange -= EventsOnTargetOutOfRange;
+            agentBehavior.Events.OnTargetChanged -= OnTargetChanged;
+            agentBehavior.Events.OnTargetNotInRange -= OnTargetOutOfRange;
         }
 
-        private void EventsOnTargetOutOfRange(ITarget target)
+        private void OnTargetOutOfRange(ITarget target)
         {
-            Animator.SetBool(WALK, false);
+            DebugLog("[AgentMoveBehavior] Target out of range. Animator set to idle.");
+            SetAnimatorMovement(0f, 0f);
         }
 
-        private void EventsOnTargetChanged(ITarget target, bool inRange)
+        private void OnTargetChanged(ITarget target, bool inRange)
         {
-            CurrentTarget = target;
-            LastPosition = CurrentTarget.Position;
-            NavMeshAgent.SetDestination(target.Position);
-            Animator.SetBool(WALK, true);
+            DebugLog($"[AgentMoveBehavior] Target changed. New target: {target?.Position}, inRange: {inRange}");
+            currentTarget = target;
+            
+            if (currentTarget != null)
+            {
+                lastTargetPosition = currentTarget.Position;
+                navMeshAgent.SetDestination(currentTarget.Position);
+            }
         }
 
         private void Update()
         {
-            if (CurrentTarget == null)
-            {
-                return;
-            }
+            if (currentTarget == null) return;
 
-            if (MinMoveDistance <= Vector3.Distance(CurrentTarget.Position, LastPosition))
-            {
-                LastPosition = CurrentTarget.Position;
-                NavMeshAgent.SetDestination(CurrentTarget.Position);
-            }
+            // 更新目标位置
+            UpdateDestination();
+            
+            // 更新动画参数
+            UpdateAnimatorParameters();
+        }
 
-            Animator.SetBool(WALK, NavMeshAgent.velocity.magnitude > 0.1f);
+        private void UpdateDestination()
+        {
+            float distanceToLastPosition = Vector3.Distance(currentTarget.Position, lastTargetPosition);
+            if (distanceToLastPosition >= minMoveDistance)
+            {
+                lastTargetPosition = currentTarget.Position;
+                navMeshAgent.SetDestination(currentTarget.Position);
+            }
+        }
+
+        private void UpdateAnimatorParameters()
+        {
+            Vector3 worldVelocity = navMeshAgent.velocity;
+            float currentSpeed = worldVelocity.magnitude;
+
+            if (currentSpeed > minVelocityForMovement)
+            {
+                Vector3 localVelocity = transform.InverseTransformDirection(worldVelocity);
+                SetAnimatorMovement(localVelocity.x, localVelocity.z);
+                DebugLog($"[AgentMoveBehavior] Moving: X={localVelocity.x:F2}, Y={localVelocity.z:F2}");
+            }
+            else
+            {
+                SetAnimatorMovement(0f, 0f);
+                DebugLog("[AgentMoveBehavior] Stopped (speed too low)");
+            }
+        }
+
+        private void SetAnimatorMovement(float x, float z)
+        {
+            animator.SetFloat(MOVE_X, x);
+            animator.SetFloat(MOVE_Y, z);
+        }
+
+        public void TriggerAttackAnimation()
+        {
+            animator.SetTrigger(ATTACK_TRIGGER);
+        }
+
+        private void OnAnimatorMove()
+        {
+            if (animator.applyRootMotion)
+            {
+                // 应用 Root Motion 位置
+                Vector3 newPosition = transform.position + animator.deltaPosition;
+                navMeshAgent.nextPosition = newPosition;
+                transform.position = newPosition;
+
+                // 处理旋转
+                Vector3 desiredVelocity = navMeshAgent.desiredVelocity;
+                if (desiredVelocity.sqrMagnitude > 0.01f)
+                {
+                    desiredVelocity.y = 0;
+                    Quaternion targetRotation = Quaternion.LookRotation(desiredVelocity);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 
+                        rotationSpeed * Time.deltaTime);
+                }
+            }
+        }
+
+        private void DebugLog(string message)
+        {
+            if (enableDebugLogs)
+            {
+                Debug.Log(message);
+            }
         }
     }
 }

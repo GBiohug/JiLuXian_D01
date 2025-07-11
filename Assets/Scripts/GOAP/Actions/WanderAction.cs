@@ -16,7 +16,8 @@ namespace GOAP.Actions
 
         public override void Start(IMonoAgent agent, CommonData data)
         {
-            data.Timer = Random.Range(WanderConfig.WaitRangeBetweenWanders.x, WanderConfig.WaitRangeBetweenWanders.y);
+            // data.Timer = Random.Range(WanderConfig.WaitRangeBetweenWanders.x, WanderConfig.WaitRangeBetweenWanders.y);
+            data.Timer = 10; // For testing purposes, set a fixed timer
         }
 
 

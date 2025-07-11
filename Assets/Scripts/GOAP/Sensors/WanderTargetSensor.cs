@@ -26,7 +26,7 @@ namespace GOAP.Sensors
         {
             int count = 0;
 
-            while (count < 5)
+            while (count < 30)
             {
                 Vector2 random = Random.insideUnitCircle * WanderConfig.WanderRadius;
                 Vector3 position = agent.Transform.position + new Vector3(
@@ -34,6 +34,7 @@ namespace GOAP.Sensors
                     0,
                     random.y
                 );
+                Debug.Log(position);
                 if (NavMesh.SamplePosition(position, out NavMeshHit hit, 1, NavMesh.AllAreas))
                 {
                     return hit.position;
