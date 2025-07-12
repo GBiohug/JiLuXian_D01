@@ -10,6 +10,7 @@ namespace GOAP.Tools
     {
 
         public WanderConfigSO WanderConfig;
+        public AttackConfigSO AttackConfig;
 
 
         public void Inject(IAction action)

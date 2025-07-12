@@ -1,7 +1,7 @@
-﻿namespace GOAP.Goals
+﻿using CrashKonijn.Goap.Runtime;
+
+namespace GOAP.Goals
 {
-    public class ApproachGoal
-    {
-        
-    }
+    public class ApproachGoal: GoalBase {}
+
 }

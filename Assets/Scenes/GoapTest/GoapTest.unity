@@ -323,7 +323,7 @@ GameObject:
   - component: {fileID: 679547682}
   m_Layer: 0
   m_Name: Capsule
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -337,7 +337,7 @@ Transform:
   m_GameObject: {fileID: 679547680}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.05, z: -22.97}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -624,7 +624,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -912,6 +912,9 @@ MonoBehaviour:
   minMoveDistance: 0.25
   minVelocityForMovement: 0.011
   rotationSpeed: 10
+  combatRotationSpeed: 15
+  combatFaceDistance: 10
+  playerdistance: 0
   enableDebugLogs: 0
 --- !u!114 &1807164089
 MonoBehaviour:
@@ -1019,7 +1022,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd0d9e0423a4812a6b736c350f2631a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerSensor: {fileID: 0}
+  patrolDetectBehavior: {fileID: 0}
 --- !u!1 &1860294896
 GameObject:
   m_ObjectHideFlags: 0
@@ -1053,6 +1056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WanderConfig: {fileID: 11400000, guid: d56e8d27312c1824788ddb16374a3e71, type: 2}
+  AttackConfig: {fileID: 11400000, guid: 836b0f42dbef6e147bcb2729e17fa85d, type: 2}
 --- !u!114 &1860294898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1133,7 +1137,7 @@ Transform:
   m_GameObject: {fileID: 2033699157}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.873528, y: 4.8712215, z: -6.5887823}
+  m_LocalPosition: {x: 6.57, y: 4.8712215, z: 7.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2755,6 +2759,8 @@ GameObject:
   - component: {fileID: 4753487322342513576}
   - component: {fileID: 4753487322342513575}
   - component: {fileID: 4753487322342513579}
+  - component: {fileID: 4753487322342513581}
+  - component: {fileID: 4753487322342513580}
   m_Layer: 0
   m_Name: TestEnemy
   m_TagString: Untagged
@@ -3313,7 +3319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd0d9e0423a4812a6b736c350f2631a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerSensor: {fileID: 0}
+  patrolDetectBehavior: {fileID: 4753487322342513580}
 --- !u!114 &4753487322342513576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3362,7 +3368,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 500
-  m_StoppingDistance: 0
+  m_StoppingDistance: 3
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -3385,7 +3391,58 @@ MonoBehaviour:
   minMoveDistance: 0.25
   minVelocityForMovement: 0.011
   rotationSpeed: 10
+  combatRotationSpeed: 15
+  combatFaceDistance: 10
+  playerdistance: 0
   enableDebugLogs: 0
+--- !u!114 &4753487322342513580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4753487322335225958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30561353b145433b9e72614075be532e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewRadius: 10
+  viewAngle: 90
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 1
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  heightOffset: 1.5
+  detectionUpdateInterval: 0.2
+  suspicionIncreaseRate: 1
+  suspicionDecreaseRate: 0.5
+  maxSuspicion: 100
+  moveBehavior: {fileID: 0}
+  IsDetected: 0
+--- !u!135 &4753487322342513581
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4753487322335225958}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!137 &4753487322346792294
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0

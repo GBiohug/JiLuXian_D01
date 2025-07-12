@@ -9,19 +9,22 @@ namespace GOAP.Sensors
 {
     public class PlayerTargetSensor : LocalTargetSensorBase, IInjectable
     {
-    
-        private Collider[] Colliders = new Collider[1];
-        
         public override void Created() {}
 
         public override void Update() {}
 
-        public override ITarget Sense(IActionReceiver agent, IComponentReference references, ITarget target)
+        public override ITarget Sense(IActionReceiver agent, IComponentReference references, ITarget existingTarget)
         {
-           
-
-            return null;
+            Vector3 position = default;
+            // Debug.Log("PlayerTargetSensor");
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                position = player.transform.position;
+            }
+            return new PositionTarget(position);
         }
+        
 
         public void Inject(GoapInjector injector){}
         

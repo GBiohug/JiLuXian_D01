@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GOAP.Behaviors
 {
 [RequireComponent(typeof(SphereCollider))]
-public class AgentPatrolBehavior : MonoBehaviour
+public class AgentPatrolDetectBehavior : MonoBehaviour
 {
     [Header("Vision Settings")]
     [SerializeField] private float viewRadius = 10f;
@@ -19,16 +20,17 @@ public class AgentPatrolBehavior : MonoBehaviour
     [SerializeField] private float suspicionIncreaseRate = 1f;
     [SerializeField] private float suspicionDecreaseRate = 0.5f;
     [SerializeField] private float maxSuspicion = 100f;
-
+    
+    [SerializeField] private AgentPatrolMoveBehavior moveBehavior;
     public bool IsDetected = false;
     // 检测到的目标
     private Dictionary<Transform, float> detectedTargets = new Dictionary<Transform, float>();
     private List<Transform> targetsInView = new List<Transform>();
     
     // 事件
-    public System.Action<Transform> OnTargetDetected;
-    public System.Action<Transform> OnTargetLost;
-    public System.Action<Transform, float> OnSuspicionChanged;
+    public Action<Transform> OnTargetDetected;
+    public Action<Transform> OnTargetLost;
+    public Action<Transform, float> OnSuspicionChanged;
     
     private SphereCollider detectionCollider;
     private float lastDetectionTime;
@@ -93,6 +95,7 @@ public class AgentPatrolBehavior : MonoBehaviour
                         detectedTargets[targetTransform] = 0f;
                         OnTargetDetected?.Invoke(targetTransform);
                         IsDetected = true;
+                       
                         Debug.Log($"[AgentPatrolBehavior] Detected target: {targetTransform.name}");
                     }
                 }
