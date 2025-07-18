@@ -2,7 +2,7 @@
 
 namespace LookingGlass
 {
-    public class OffsetCamera : MonoBehaviour
+    public class VirtualCamera : MonoBehaviour
     {
         [Tooltip("The camera which this camera will follow with an offset")]
         [SerializeField] private Camera m_MainCamera;

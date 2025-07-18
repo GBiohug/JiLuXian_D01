@@ -1,27 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Playables;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
+namespace LookingGlass{
+   public class LookingGlassSceneData : MonoBehaviour
+   {
+      public GameObject mainlight;
+      public Material skybox;
+      public Cubemap reflcubemap;
+      public GameObject root;
+      public Scene Scene;
+      public Transform cameraSpawn;
+      public bool EnableFog;
+      public bool EnablePostProcessing;
+      public Transform SpawnTransform;
+      public bool SceneActive;
 
-public class SceneMetaData : MonoBehaviour
-{
+      public int RendererIndex;
+      private void SetUp()
+      {
+         Scene = gameObject.scene;
 
-    public GameObject mainLight = null;
-    public Material skybox = null;
-    public Cubemap reflection = null;
-   
-    public Transform WorldUpTransform = null;
-    //public float FieldOfView = ;
-    public Transform SpawnTransform;
-    public PlayableDirector FlythroughDirector;
-    public PlayableDirector SequenceDirector;
-    public GameObject Root;
-    public Scene Scene;
-    public bool FogEnabled;
-    public bool PostProcessingEnabled;
-    public bool StartActive;
-    
+         //Disable objects that shouldn't be used in a multi scene setup
+         foreach (var ob in Scene.GetRootGameObjects())
+         {
+            if (ob != gameObject && ob != root && SceneActive)
+            {
+               ob.SetActive(false);
+            }
+         }
+        
+         //Register scene
+         LookingGlassManager.RegisterScene(Scene.name, this);
+      }
+   }
 }
