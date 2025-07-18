@@ -15,7 +15,7 @@ namespace GOAP.Actions
         private Animator animator;
         private GoapActionBase<AttackData> _goapActionBaseImplementation;
 
-        private bool attacking = false;
+        // private bool attacking = false;
 
         public override void Start(IMonoAgent agent, AttackData data)
         {
